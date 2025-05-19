@@ -197,6 +197,11 @@ TIMESTAMP = OpCode("TIMESTAMP", 0x42, 0, 1)
 NUMBER = OpCode("NUMBER", 0x43, 0, 1)
 DIFFICULTY = OpCode("DIFFICULTY", 0x44, 0, 1)
 GASLIMIT = OpCode("GASLIMIT", 0x45, 0, 1)
+# Added on 19 May 2025
+CHAINID = OpCode("CHAINID", 0x46, 0, 1) # for block.number >= ???_FORK_BLKNUM
+SELFBALANCE = OpCode("SELFBALANCE", 0x47, 0, 9) # for block.number >= ???_FORK_BLKNUM
+BASEFEE = OpCode("BASEFEE", 0x48, 0, 10)
+BLOBHASH = OpCode("BLOBHASH", 0x49, 0, 0)
 
 # Stack, Memory, Storage, Flow
 POP = OpCode("POP", 0x50, 1, 0)
@@ -211,6 +216,11 @@ PC = OpCode("PC", 0x58, 0, 1)
 MSIZE = OpCode("MSIZE", 0x59, 0, 1)
 GAS = OpCode("GAS", 0x5a, 0, 1)
 JUMPDEST = OpCode("JUMPDEST", 0x5b, 0, 0)
+# Added on 19 May 2025
+TLOAD = OpCode("TLOAD", 0x5c, 1, 1) # for block.number >= ???
+TSTORE = OpCode("TSTORE", 0x5d, 2, 0) # for block.number >= ???
+MCOPY = OpCode("MCOPY", 0x5e, 3, 0) # for block.number >= ???
+PUSH0 = OpCode("PUSH0", 0x5f, 0, 1)
 
 PUSH1 = OpCode("PUSH1", 0x60, 0, 1)
 PUSH2 = OpCode("PUSH2", 0x61, 0, 1)
