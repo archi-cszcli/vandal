@@ -263,6 +263,8 @@ class TACGraph(cfg.ControlFlowGraph):
         """
         Replace all stack MetaVariables will be replaced with the actual
         variables they refer to.
+        处理栈变量引用
+        将抽象的栈位置引用替换为对应的具体变量
         """
         for block in self.blocks:
             block.hook_up_stack_vars()
@@ -271,6 +273,7 @@ class TACGraph(cfg.ControlFlowGraph):
         """
         Add jumps to blocks with unresolved jumps if they can be inferred
         from the jump variable's definition sites.
+        解析未确定的跳转目标
         """
         for block in self.blocks:
             block.hook_up_def_site_jumps()
@@ -283,6 +286,8 @@ class TACGraph(cfg.ControlFlowGraph):
 
         This is assumed to be performed after constant propagation and/or folding,
         since edges are deduced from constant-valued jumps.
+
+        推断和构建控制流图边缘连接
 
         Note that the global mutate_jumps and generate_throws settings should
         likely be true only in the final iteration of a dataflow analysis, at which
