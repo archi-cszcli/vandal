@@ -183,6 +183,9 @@ def stack_analysis(cfg: tac_cfg.TACGraph) -> bool:
     maximal set of values possible at that stack position at a given point of
     program execution.
 
+    为什么要计算每个basic block入口和出口的栈状态
+    This is necessary to determine the structure of the control flow graph,
+
     Args:
       cfg: the graph to analyse.
 

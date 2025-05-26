@@ -169,6 +169,7 @@ def blocks_from_ops(ops: t.Iterable[EVMOp]) -> t.Iterable[EVMBasicBlock]:
 
     Returns:
       List of BasicBlocks from the input ops, in arbitrary order.
+      为什么是 in arbitrary order？
     """
     blocks = []
 
