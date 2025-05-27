@@ -194,9 +194,13 @@ def stack_analysis(cfg: tac_cfg.TACGraph) -> bool:
     """
 
     # True iff the graph was structurally modified at some point.
+    # 这个标志用于跟踪分析过程是否导致了控制流图结构的变化（如发现新的边或跳转关系）
     graph_modified = False
 
     # Initialise all entry and exit stacks to be empty.
+    # 初始化堆栈状态
+    # 清空所有基本块的入口栈和出口栈
+    # 重置所有块的符号溢出标志 symbolic_overflow
     if settings.reinit_stacks:
         for block in cfg.blocks:
             block.symbolic_overflow = False
@@ -204,6 +208,9 @@ def stack_analysis(cfg: tac_cfg.TACGraph) -> bool:
             block.exit_stack = VariableStack()
 
     # Initialise a worklist with blocks that have no precedessors
+    # 采用工作队列算法，从没有前驱的块（程序入口点）开始分析
+    # 创建访问状态字典，用于跟踪哪些块已被处理过
+    # 这是一种经典的图遍历方法，确保所有可达的基本块都会被分析
     queue = [block for block in cfg.blocks if len(block.preds) == 0]
     visited = {block: False for block in cfg.blocks}
 
@@ -238,6 +245,9 @@ def stack_analysis(cfg: tac_cfg.TACGraph) -> bool:
         if counter % 1000 == 0 and bail_time >= 0:
             elapsed = time.process_time() - start_clock
             if elapsed > bail_time:
+                # add log info
+                logging.info("Bailed out after %s seconds", elapsed)
+                ####
                 break
 
         curr_block = queue.pop(0)
@@ -294,10 +304,12 @@ def stack_analysis(cfg: tac_cfg.TACGraph) -> bool:
                         b.entry_stack.set_max_size(new_size)
                         b.exit_stack.set_max_size(new_size)
 
-        # Build the exit stack.
+        # Build the exit stack. 构建出口栈
         # If a symbolic overflow occurred, the exit stack did not change,
         # and we can skip the rest of the processing (as with entry stack).
-        if curr_block.build_exit_stack():
+        # 返回True表示发生了符号栈溢出，此时跳过后续处理
+        # 返回False表示正常构建完成，继续处理
+        if curr_block.build_exit_stack():       # 调用tac_cfg.py中的build_exit_stack方法模拟执行该块的所有指令，计算执行后的栈状态
             continue
 
         if settings.mutate_blockwise:
@@ -305,8 +317,8 @@ def stack_analysis(cfg: tac_cfg.TACGraph) -> bool:
             # rather than all at once at the end. The graph evolves as we go.
 
             if settings.hook_up_stack_vars:
-                curr_block.hook_up_stack_vars()
-                curr_block.apply_operations(settings.set_valued_ops)
+                curr_block.hook_up_stack_vars()     # 建立栈变量之间的数据依赖关系
+                curr_block.apply_operations(settings.set_valued_ops)    # 执行常量传播和折叠等优化
 
             if settings.hook_up_jumps:
                 old_succs = list(sorted(curr_block.succs))
